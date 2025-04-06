@@ -1,0 +1,17 @@
+{
+  "name": "reactcooked2",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start"
+  },
+  "dependencies": {
+    "@react-native-community/cli": "latest",
+    "@react-navigation/native": "7.1.4",
+    "@react-navigation/native-stack": "7.3.8",
+    "expo": "52.0.42",
+    "react": "^18.3.1",
+    "react-native": "0.76.8",
+    "setimmediate": "1.0.5"
+  }
+}

@@ -1,0 +1,113 @@
+import MyButton from '../components/MyButton';
+import {StyleSheet, TextInput, View, Text, Alert} from "react-native";
+import {useState} from 'react'
+
+const Screen1 = ({ navigation }) => {
+    let [name, setName] = useState("");
+    let [password, setPassword] = useState("");
+
+    async function sendPerson(){
+        let res = await fetch("http://130.61.28.111:3000/sendPeople", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                name: name,
+                password: password,
+            })
+        });
+        res = await res.json();
+        if(!res.ok){
+            Alert.alert("Alert", "server response\n" + res, ["OK"]);
+        }
+        console.log(res);
+    }
+
+    return(
+        <View style={styles.main}>
+            <View style={styles.titleContainer}>
+                <Text style={styles.h1}>Register App</Text>
+                <Text style={styles.h2}>Sign in to continue</Text>
+            </View>
+            <View style={styles.container}>
+                <TextInput inputMode="text" style={styles.input} placeholder="Name" onChange={(event) => {setName(event.target.value)}} required></TextInput>
+                <TextInput inputMode="text" style={styles.input} placeholder="Password" onChange={(event) => {setPassword(event.target.value)}} secureTextEntry={true} required></TextInput>
+                <MyButton text="Register" onPress={async () => {
+                    await sendPerson();
+                    navigation.navigate("s2")
+                }} style={styles}></MyButton>
+            </View>
+        </View>
+    )
+}
+
+const styles = StyleSheet.create({
+    main: {
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+        backgroundColor: "#ededed",
+        width: "100%",
+        height: "100%",
+    },
+    input: {
+        borderBottomWidth: 2,
+        borderBottomColor: "#7777dd",
+        borderBottomStyle: "solid",
+        display: "block",
+        width: 150,
+        height: 30,
+        lineHeight: 30,
+        fontSize: 20,
+        margin: 5,
+        padding: 0,
+        textAlign: "center",
+    },
+    button: {
+        display: "block",
+        backgroundColor: "#7777dd",
+        width: "80%",
+        padding: 10,
+        borderRadius: 10,
+        margin: 15
+    },
+    buttonText: {
+        color: "#fdfdfd",
+        fontWeight: "bold",
+        fontSize: 18,
+        textAlign: "center"
+    },
+    container: {
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+    },
+    titleContainer: {
+        backgroundColor: "#7777dd",
+        height: 160,
+        width: "130%",
+        position: "absolute",
+        top: -20,
+        textAlign: "center",
+        borderBottomRightRadius: "100%",
+        borderBottomLeftRadius: "100%",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    h1: {
+        color: "#fdfdfd",
+        fontSize: 35,
+        width: "fit-content",
+        fontWeight: "bold"
+    },
+    h2: {
+        color: "#ffe438",
+        width: "fit-content"
+    }
+})
+
+export default Screen1;
