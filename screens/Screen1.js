@@ -7,21 +7,18 @@ const Screen1 = ({ navigation }) => {
     let [password, setPassword] = useState("");
 
     async function sendPerson(){
-        let res = await fetch("http://130.61.28.111:3000/sendPeople", {
-            method: "POST",
+        let res = await fetch("http://192.168.0.104:3000/sendPeople", {
+            method: "post",
             headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                name: name,
-                password: password,
+                "name": name,
+                "password": password,
             })
         });
         res = await res.json();
-        if(!res.ok){
-            Alert.alert("Alert", "server response\n" + res, ["OK"]);
-        }
-        console.log(res);
+        return res;
     }
 
     return(
@@ -31,11 +28,11 @@ const Screen1 = ({ navigation }) => {
                 <Text style={styles.h2}>Sign in to continue</Text>
             </View>
             <View style={styles.container}>
-                <TextInput inputMode="text" style={styles.input} placeholder="Name" onChange={(event) => {setName(event.target.value)}} required></TextInput>
-                <TextInput inputMode="text" style={styles.input} placeholder="Password" onChange={(event) => {setPassword(event.target.value)}} secureTextEntry={true} required></TextInput>
+                <TextInput inputMode="text" style={styles.input} placeholder="Name" onChangeText={(text) => setName(text)} required></TextInput>
+                <TextInput inputMode="text" style={styles.input} placeholder="Password" onChangeText={(text) => setPassword(text)} secureTextEntry={true} required></TextInput>
                 <MyButton text="Register" onPress={async () => {
-                    await sendPerson();
-                    navigation.navigate("s2")
+                    let res = await sendPerson(); Alert.alert("Alert", "server response\n" + res.body, ["OK"]);
+                    // navigation.navigate("s2");
                 }} style={styles}></MyButton>
             </View>
         </View>
