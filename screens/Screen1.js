@@ -3,21 +3,24 @@ import {StyleSheet, TextInput, View, Text, Alert} from "react-native";
 import {useState} from 'react'
 
 const Screen1 = ({ navigation }) => {
-    let [name, setName] = useState("");
-    let [password, setPassword] = useState("");
+    const [name, setName] = useState("");
+    const [password, setPassword] = useState("");
 
     async function sendPerson(){
+        if(name == "" || password == "") {
+            console.log("fail")
+            return;
+        }
         let res = await fetch("http://192.168.0.104:3000/sendPeople", {
-            method: "post",
+            method: 'POST',
             headers: {
-                "Content-Type": "application/json"
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                "name": name,
-                "password": password,
-            })
+                name: name,
+                password: password,
+            }),
         });
-        res = await res.json();
         return res;
     }
 
@@ -31,8 +34,12 @@ const Screen1 = ({ navigation }) => {
                 <TextInput inputMode="text" style={styles.input} placeholder="Name" onChangeText={(text) => setName(text)} required></TextInput>
                 <TextInput inputMode="text" style={styles.input} placeholder="Password" onChangeText={(text) => setPassword(text)} secureTextEntry={true} required></TextInput>
                 <MyButton text="Register" onPress={async () => {
-                    let res = await sendPerson(); Alert.alert("Alert", "server response\n" + res.body, ["OK"]);
-                    // navigation.navigate("s2");
+                    let res = await sendPerson();
+                    if (res.status == 200) {
+                        navigation.navigate('s2');
+                    }else {
+                        Alert.alert("Error", "Person already exists", ["OK"]);
+                    }
                 }} style={styles}></MyButton>
             </View>
         </View>
