@@ -2,14 +2,13 @@ import {Text, View, FlatList, StyleSheet, Alert} from "react-native";
 import {useEffect, useState} from "react";
 import MyButton from "../components/MyButton";
 
+const ip = "192.168.0.104"
+
 const Screen2 = ({navigation}) => {
     let [people, setPeople] = useState({});
-    async function request(){
-        let res = await fetch("http://192.168.119.114:3000/getpeople");
-        setPeople(await res.json());
-    }
+
     function deletePerson(name){
-        fetch("http://192.168.119.114:3000/deleteperson", {
+        fetch(`http://${ip}/deleteperson`, {
             method: "post",
             headers: {
                 "Content-Type": "application/json",
@@ -19,26 +18,34 @@ const Screen2 = ({navigation}) => {
             })
         })
     }
-    
-    request();
+
+    useEffect(() => {
+        async function request(){
+            let res = await fetch(`http://${ip}:3000/getpeople`);
+            setPeople(await res.json());
+        }
+        request();
+    }, [])
 
     return(
         <View>
             <FlatList
-            data={people}
-            renderItem={({ item }) => 
-            <View style={styles.container}>
-                <Text style={styles.name}>{item.id}: {item.name}</Text>
-                <MyButton text="Details" style={styles} onPress={() => navigation.navigate('s3', {person: item})}></MyButton>
-                <MyButton text="Delete" style={styles} onPress={() => Alert.alert("Confirm", "Are you sure you want to delete " + item.name + "? This action cannot be undone", [
-                    {
-                        text: "Cancel"
-                    },
-                    {text: "OK", 
-                        onPress: () => deletePerson(item.name)
-                    },
-                    ])}></MyButton> */
-            </View>}>
+                data={people}
+                renderItem={({ item }) =>
+                    <View style={styles.container}>
+                        <Text style={styles.name}>{item.id}: {item.name}</Text>
+                        <MyButton text="Details" style={styles} onPress={() => navigation.navigate('s3', {person: item})}></MyButton>
+                        <MyButton text="Delete" style={styles} onPress={() => Alert.alert(
+                            "Confirm",
+                            "Are you sure you want to delete " + item.name + "? This action cannot be undone",
+                            [{
+                                text: "Cancel"
+                            },
+                            {text: "OK",
+                                onPress: () => deletePerson(item.name)
+                            },
+                        ])}></MyButton>
+                    </View>}>
             </FlatList>
         </View>
     )
@@ -58,11 +65,10 @@ const styles = StyleSheet.create({
         flexBasis: "50%",
         flexDirection: "row",
         width: "100%",
-        height: 50,
+        height: "fitContent",
         flexWrap: "wrap",
         justifyContent: "space-evenly",
         margin: 5,
-        height: "fitContent"
     },
     name: {
         textAlign: "center",
