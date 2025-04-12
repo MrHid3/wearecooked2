@@ -2,16 +2,18 @@ import MyButton from '../components/MyButton';
 import {StyleSheet, TextInput, View, Text, Alert} from "react-native";
 import {useEffect, useState} from 'react'
 
+const ip = "192.168.0.104"
+
 const Screen1 = ({ navigation }) => {
     const [name, setName] = useState("");
     const [password, setPassword] = useState("");
 
-    async function sendPerson(){
+    function sendPerson(){
         if(name == "" || password == "") {
             console.log("fail")
             return;
         }
-        let res = await fetch("http://192.168.119.114:3000/sendPeople", {
+        fetch(`http://${ip}:3000/sendPeople`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -20,8 +22,13 @@ const Screen1 = ({ navigation }) => {
                 name: name,
                 password: password,
             }),
-        });
-        return res;
+        }).then(res => {
+            if (res.status == 200) {
+                navigation.navigate('s2');
+            }else {
+                Alert.alert("Error", "Person already exists", ["OK"]);
+            }
+        })
     }
 
     return(
@@ -33,15 +40,7 @@ const Screen1 = ({ navigation }) => {
             <View style={styles.container}>
                 <TextInput inputMode="text" style={styles.input} placeholder="Name" onChangeText={(text) => setName(text)} required></TextInput>
                 <TextInput inputMode="text" style={styles.input} placeholder="Password" onChangeText={(text) => setPassword(text)} secureTextEntry={true} required></TextInput>
-                <MyButton text="Register" onPress={
-                    useEffect(async () => {
-                    let res = await sendPerson();
-                    if (res.status == 200) {
-                        navigation.navigate('s2');
-                    }else {
-                        Alert.alert("Error", "Person already exists", ["OK"]);
-                    }
-                })} style={styles}></MyButton>
+                <MyButton text="Register" onPress={() => sendPerson()} style={styles}></MyButton>
             </View>
         </View>
     )
